@@ -8,9 +8,11 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException.UnsupportedMediaType;
 
 import com.hclpractics.trackingservice.dto.ResponseDTO;
 
@@ -45,4 +47,15 @@ public class GlobleExceptionHandler {
 
 	}
 
+	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+	public ResponseEntity<Object> handleUnsupportedMediaException(HttpMediaTypeNotSupportedException ex){
+		Map<String, String> errors = new HashMap<>();
+
+		System.out.println(ex.getMessage());
+		errors.put("message", ex.getMessage());
+		ResponseDTO responseDto = new ResponseDTO(errors, HttpStatus.UNSUPPORTED_MEDIA_TYPE, LocalDateTime.now(), new ArrayList());
+
+		return new ResponseEntity<Object>(responseDto, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+
+	}
 }
